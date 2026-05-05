@@ -2,6 +2,14 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+  nitro: {
+    experimental: {
+      tasks: true,
+    },
+    scheduledTasks: {
+      "*/5 * * * *": ["update-rss"],
+    },
+  },
   modules: ["@pinia/nuxt", "@nuxt/eslint", "@nuxtjs/tailwindcss"],
   css: ["~/assets/css/tailwind.css"],
   typescript: {
