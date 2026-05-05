@@ -4,7 +4,7 @@ import {
   type Article,
 } from "../../utils/rss";
 
-const MAX_LIMIT = 50;
+const MAX_LIMIT = 99;
 const DEFAULT_LIMIT = 10;
 
 const toPositiveInt = (value: unknown, fallback: number) => {

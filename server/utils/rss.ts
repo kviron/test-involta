@@ -7,6 +7,7 @@ export type Source = {
 };
 
 export type Article = {
+  id: string;
   title?: string;
   description: string;
   link?: string;
@@ -40,10 +41,19 @@ export const parseSourceFilter = (value: unknown): string[] => {
   return list.map((item) => String(item)).filter(Boolean);
 };
 
+const buildArticleId = (guid: unknown): string => {
+  if (typeof guid === "string") {
+    const trimmed = guid.trim();
+    if (trimmed.length > 0) return trimmed;
+  }
+  return crypto.randomUUID();
+};
+
 export const parseSourceArticles = async (source: Source): Promise<Article[]> => {
   const parsed = await parser.parseURL(source.url);
 
   return parsed.items.map((item) => ({
+    id: buildArticleId(item.guid),
     title: item.title,
     description: item.contentSnippet ?? item.content ?? item.summary ?? "",
     link: item.link,

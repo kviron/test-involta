@@ -1,6 +1,8 @@
 <template>
-  <Container>
-    <h1>Список новостей</h1>
-    <UiButton type="button" disabled>Сбросить</UiButton>
+  <Container class="flex">
+    <div>Список новостей</div>
+    <UiButton type="button" disabled>
+      <img src="~/assets/icons/reset.svg" alt="Reset" />
+    </UiButton>
   </Container>
 </template>
