@@ -17,11 +17,5 @@ export default defineNuxtConfig({
       mosUrl: "https://www.mos.ru/rss",
       lentaUrl: "https://lenta.ru/rss",
     },
-    public: {
-      rssDefaults: {
-        mosUrl: "https://www.mos.ru/rss",
-        lentaUrl: "https://lenta.ru/rss",
-      },
-    },
   },
 });
