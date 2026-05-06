@@ -9,13 +9,15 @@ defineProps<{
 
 <template>
   <article
-    class="bg-white rounded-md shadow-soft flex flex-col justify-between gap-4 overflow-hidden"
+    class="bg-white rounded-md shadow-soft flex flex-col justify-between gap-4 overflow-hidden min-h-[256px]"
   >
     <div class="pt-7 px-7">
       <header class="text-primary-main text-lg font-bold">
         {{ article.title }}
       </header>
-      <div>
+    </div>
+    <div class="flex flex-col">
+      <div class="px-7">
         <NuxtLink
           :to="article.link"
           target="_blank"
@@ -23,12 +25,12 @@ defineProps<{
           >Подробнее</NuxtLink
         >
       </div>
+      <footer
+        class="flex items-center gap-2 justify-between text-secondary-main py-3 px-7"
+      >
+        <span class="underline">www.{{ article.source.toLowerCase() }}</span>
+        <span>{{ dayjs(article.pubDate).format("DD.MM.YYYY") }}</span>
+      </footer>
     </div>
-    <footer
-      class="flex items-center gap-2 justify-between text-secondary-main py-3 px-7 bg-bg-main"
-    >
-      <span class="underline">www.{{ article.source.toLowerCase() }}</span>
-      <span>{{ dayjs(article.pubDate).format("DD.MM.YYYY") }}</span>
-    </footer>
   </article>
 </template>

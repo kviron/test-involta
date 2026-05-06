@@ -11,8 +11,9 @@ const emit = defineEmits<{
 
 <template>
   <button
-    type="button"
-    class="p-2 border border-gray-300"
+    :type="props.type"
+    :disabled="props.disabled"
+    class="p-2"
     @click="emit('click', $event)"
   >
     <slot />

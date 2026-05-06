@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import type { Article } from "../../../server/utils/rss";
 
 defineProps<{
@@ -10,11 +11,17 @@ defineProps<{
 const emit = defineEmits<{
   (e: "page-change", page: number): void;
 }>();
+
+const articlesStore = useArticlesStore();
+const { view } = storeToRefs(articlesStore);
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+  <div class="flex flex-col gap-12">
+    <div
+      class="grid gap-5"
+      :class="view === 'list' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'"
+    >
       <ArticleItem
         v-for="article in articles"
         :article="article"

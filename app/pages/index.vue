@@ -14,12 +14,13 @@ const toInt = (value: string | null, fallback: number) => {
 useArticlesQuerySync({
   page,
   source,
-  setPage: (nextPage: number) => articlesStore.setPagination({ page: nextPage }),
+  setPage: (nextPage: number) =>
+    articlesStore.setPagination({ page: nextPage }),
   setSource: (nextSource: string) => articlesStore.setSource(nextSource),
 });
 
 const { data: sources } = await useAsyncData<Source[]>("article-sources", () =>
-  $fetch("/api/articles/sources"),
+  $fetch<Source[]>("/api/articles/sources" as string),
 );
 
 const { data: articles, status } = await useAsyncData<Article[]>(
@@ -70,7 +71,7 @@ const handleSourceChange = (nextSource: string) => {
           @update:model-value="handleSourceChange"
         />
       </div>
-      <div v-if="status === 'pending'">Loading...</div>
+      <div v-if="articles && articles.length === 0">No articles found</div>
       <ArticleList
         v-else-if="articles"
         :articles="articles"

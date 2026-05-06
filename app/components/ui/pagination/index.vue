@@ -44,11 +44,11 @@ const goToPage = (page: number) => {
 <template>
   <nav
     v-if="totalPages > 1"
-    class="flex items-center gap-1"
+    class="flex items-center gap-1 font-bold text-lg"
     aria-label="Pagination"
   >
     <button
-      class="px-3 py-1 border-none font-bold disabled:opacity-50"
+      class="px-3 py-1 border-none disabled:opacity-50"
       :disabled="currentPage <= 1"
       @click="goToPage(currentPage - 1)"
     >
@@ -59,7 +59,7 @@ const goToPage = (page: number) => {
       <span v-if="page === '...'" class="px-2 text-gray-500">...</span>
       <button
         v-else
-        class="px-3 py-1 border-none font-bold"
+        class="px-3 py-1 border-none"
         :class="{ 'text-primary-main': page === currentPage }"
         @click="goToPage(page)"
       >
@@ -68,7 +68,7 @@ const goToPage = (page: number) => {
     </template>
 
     <button
-      class="px-3 py-1 border-none font-bold disabled:opacity-50"
+      class="px-3 py-1 border-none disabled:opacity-50"
       :disabled="currentPage >= totalPages"
       @click="goToPage(currentPage + 1)"
     >
