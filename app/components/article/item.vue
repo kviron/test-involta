@@ -27,7 +27,7 @@ defineProps<{
     <footer
       class="flex items-center gap-2 justify-between text-secondary-main py-3 px-7 bg-bg-main"
     >
-      <span class="underline">{{ article.source.toLowerCase() }}</span>
+      <span class="underline">www.{{ article.source.toLowerCase() }}</span>
       <span>{{ dayjs(article.pubDate).format("DD.MM.YYYY") }}</span>
     </footer>
   </article>
