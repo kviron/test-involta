@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     },
   },
   modules: ["@pinia/nuxt", "@nuxt/eslint", "@nuxtjs/tailwindcss"],
-  css: ["~/assets/css/tailwind.css"],
+  css: ["~/assets/css/main.css"],
   typescript: {
     strict: true,
     typeCheck: true,

@@ -5,7 +5,7 @@ import {
 } from "../../utils/rss";
 
 const MAX_LIMIT = 99;
-const DEFAULT_LIMIT = 10;
+const DEFAULT_LIMIT = 4;
 
 const toPositiveInt = (value: unknown, fallback: number) => {
   const parsed = Number.parseInt(String(value), 10);
