@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import ResetIcon from "~/assets/icons/reset.svg";
 
 const articlesStore = useArticlesStore();
 const { q } = storeToRefs(articlesStore);
@@ -23,11 +24,11 @@ const handleReset = async () => {
       <div class="text-4xl font-bold">Список новостей</div>
       <UiButton
         type="button"
-        class="flex items-center justify-center rounded-full shadow-soft w-[40px] h-[40px]"
+        class="flex items-center bg-white justify-center rounded-full shadow-soft w-[40px] h-[40px]"
         :disabled="isRefreshing"
         @click="handleReset"
       >
-        <img src="~/assets/icons/reset.svg" alt="Reset" />
+        <ResetIcon class="fill-primary-main" />
       </UiButton>
     </div>
     <div>

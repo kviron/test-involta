@@ -1,8 +1,7 @@
-import { useLocalStorage } from "@vueuse/core";
-
 type ArticlesView = "list" | "grid";
 
 const ARTICLES_VIEW_STORAGE_KEY = "articles:view";
+const ARTICLES_VIEW_COOKIE_KEY = "articles:view";
 
 export const useArticlesStore = defineStore("articlesStore", {
   state: () => ({
@@ -12,14 +11,10 @@ export const useArticlesStore = defineStore("articlesStore", {
     source: "",
     total: 0,
     totalPages: 0,
-    view: useLocalStorage<ArticlesView>(ARTICLES_VIEW_STORAGE_KEY, "grid"),
+    view: useCookie<ArticlesView>(ARTICLES_VIEW_COOKIE_KEY, {
+      default: () => "grid",
+    }).value as ArticlesView,
   }),
-  hydrate(state) {
-    state.view = useLocalStorage<ArticlesView>(
-      ARTICLES_VIEW_STORAGE_KEY,
-      "grid",
-    ).value;
-  },
   actions: {
     setPagination(payload: {
       page?: number;
@@ -38,6 +33,10 @@ export const useArticlesStore = defineStore("articlesStore", {
     },
     setView(view: ArticlesView) {
       this.view = view;
+      useCookie<ArticlesView>(ARTICLES_VIEW_COOKIE_KEY).value = view;
+      if (import.meta.client) {
+        localStorage.setItem(ARTICLES_VIEW_STORAGE_KEY, view);
+      }
     },
     setSearch(q: string) {
       this.q = q;

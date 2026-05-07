@@ -12,6 +12,7 @@ export default {
         },
         secondary: {
           main: "#DCDCDC",
+          light: "#C4C4C4",
         },
         hr: "#E5E5E5",
       },

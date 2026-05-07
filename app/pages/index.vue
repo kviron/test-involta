@@ -5,7 +5,7 @@ import type { Article, Source } from "../../server/utils/rss";
 import { useArticlesQuerySync } from "../composables/useArticlesQuerySync";
 
 const articlesStore = useArticlesStore();
-const { page, limit, source, q, totalPages } = storeToRefs(articlesStore);
+const { page, limit, source, q, totalPages, view } = storeToRefs(articlesStore);
 const searchQuery = refDebounced(q, 350);
 
 const toInt = (value: string | null, fallback: number) => {
@@ -65,6 +65,11 @@ const handleSourceChange = (nextSource: string) => {
   articlesStore.setSource(nextSource);
   articlesStore.setPagination({ page: 1 });
 };
+
+const handleViewChange = (nextView: "list" | "grid") => {
+  if (nextView === view.value) return;
+  articlesStore.setView(nextView);
+};
 </script>
 
 <template>
@@ -76,6 +81,7 @@ const handleSourceChange = (nextSource: string) => {
           :model-value="source"
           @update:model-value="handleSourceChange"
         />
+        <ArticleView :view="view" @update:view="handleViewChange" />
       </div>
       <ArticleEmptyState v-if="articles && articles.length === 0" />
       <ArticleList
@@ -83,6 +89,7 @@ const handleSourceChange = (nextSource: string) => {
         :articles="articles"
         :totalPages="totalPages"
         :page="page"
+        :view="view"
         @page-change="handlePageChange"
       />
     </div>

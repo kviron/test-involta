@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@theme {
+  --aspect-image: 2 / 1;
+}
+
 body {
   background-color: #fbfbfb;
+  font-family: "Arial", sans-serif;
 }

@@ -1,3 +1,5 @@
+import svgLoader from "vite-svg-loader";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
@@ -10,7 +12,7 @@ export default defineNuxtConfig({
       "*/5 * * * *": ["update-rss"],
     },
   },
-  modules: ["@pinia/nuxt", "@nuxt/eslint", "@nuxtjs/tailwindcss"],
+  modules: ["@pinia/nuxt", "@nuxt/eslint", "@nuxtjs/tailwindcss", "@nuxt/image"],
   css: ["~/assets/css/main.css"],
   typescript: {
     strict: true,
@@ -25,5 +27,28 @@ export default defineNuxtConfig({
       mosUrl: "https://www.mos.ru/rss",
       lentaUrl: "https://lenta.ru/rss",
     },
+  },
+  vite: {
+    plugins: [
+      svgLoader({
+        svgoConfig: {
+          plugins: [
+            "preset-default",
+            {
+              name: "removeAttrs",
+              params: {
+                attrs: "*:fill",
+              },
+            },
+            {
+              name: "addAttributesToSVGElement",
+              params: {
+                attributes: [{ fill: "currentColor" }],
+              },
+            },
+          ],
+        },
+      }),
+    ],
   },
 });

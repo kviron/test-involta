@@ -29,7 +29,7 @@ const onInput = (event: Event) => {
   <input
     :type="props.type"
     :value="props.modelValue"
-    class="border-none text-black shadow-soft placeholder:text-secondary-main min-w-0 rounded-md border bg-white px-3 py-2 text-sm min-h-10"
+    class="border-none outline-none text-black shadow-soft placeholder:text-secondary-main min-w-0 rounded-md border bg-white px-3 py-2 text-sm min-h-10"
     v-bind="attrs"
     @input="onInput"
   />
