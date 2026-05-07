@@ -14,13 +14,62 @@ const stripHtml = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const content = computed(() => {
+const escapeHtml = (value: string) =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+
+const highlightMatches = (
+  text: string,
+  regions: Array<[number, number]> = [],
+) => {
+  if (!regions.length) return escapeHtml(text);
+
+  const chunks: string[] = [];
+  let lastIndex = 0;
+
+  for (const [start, end] of regions) {
+    if (start > lastIndex) {
+      chunks.push(escapeHtml(text.slice(lastIndex, start)));
+    }
+
+    chunks.push(
+      `<span class="mark-search">${escapeHtml(text.slice(start, end + 1))}</span>`,
+    );
+    lastIndex = end + 1;
+  }
+
+  if (lastIndex < text.length) {
+    chunks.push(escapeHtml(text.slice(lastIndex)));
+  }
+
+  return chunks.join("");
+};
+
+const titleText = computed(() => props.article.title ?? "");
+
+const titleHtml = computed(() =>
+  highlightMatches(titleText.value, props.article.searchMatches?.title),
+);
+
+const contentText = computed(() => {
+  if (props.article.descriptionPlain) {
+    return props.article.descriptionPlain;
+  }
+
   const description = props.article.description ?? "";
   if (typeof DOMPurify.sanitize === "function") {
     return DOMPurify.sanitize(description, { ALLOWED_TAGS: [] });
   }
   return stripHtml(description);
 });
+
+const contentHtml = computed(() =>
+  highlightMatches(contentText.value, props.article.searchMatches?.description),
+);
 </script>
 
 <template>
@@ -28,7 +77,7 @@ const content = computed(() => {
     class="bg-white rounded-md shadow-soft flex flex-col justify-between gap-4 overflow-hidden"
     :class="view === 'grid' && 'min-h-[256px]'"
   >
-    <div class="flex flex-col p-8">
+    <div class="flex flex-col p-8 items-start">
       <div v-if="view === 'list'" class="flex md:flex-row flex-col gap-4">
         <NuxtImg
           :src="article.image"
@@ -38,9 +87,9 @@ const content = computed(() => {
         />
         <div>
           <h2 class="text-primary-main text-lg font-bold mb-5">
-            {{ article.title }}
+            <span v-html="titleHtml" />
           </h2>
-          <p class="mb-5" v-html="content" />
+          <p class="mb-5" v-html="contentHtml" />
           <NuxtLink
             :to="article.link"
             target="_blank"
@@ -54,9 +103,9 @@ const content = computed(() => {
         class="flex-grow flex flex-col justify-between"
       >
         <h2 class="text-primary-main text-lg font-bold mb-7">
-          {{ article.title }}
+          <span v-html="titleHtml" />
         </h2>
-        <p class="mb-5" v-html="content" />
+        <p class="mb-5" v-html="contentHtml" />
         <NuxtLink
           :to="article.link"
           target="_blank"

@@ -4,24 +4,18 @@ import ResetIcon from "~/assets/icons/reset.svg";
 import SearchIcon from "~/assets/icons/search.svg";
 
 const articlesStore = useArticlesStore();
-const { q } = storeToRefs(articlesStore);
-const isRefreshing = ref(false);
+const { q, isRefreshing } = storeToRefs(articlesStore);
 
 const handleReset = async () => {
-  if (isRefreshing.value) return;
-
-  isRefreshing.value = true;
-  try {
-    await articlesStore.reset();
-  } finally {
-    isRefreshing.value = false;
-  }
+  await articlesStore.reset();
 };
 </script>
 
 <template>
-  <Container class="flex justify-between align-center items-center my-8">
-    <div class="flex items-center gap-8">
+  <Container
+    class="flex md:justify-between items-center my-8 flex-col md:flex-row gap-5"
+  >
+    <div class="w-full flex gap-8">
       <div class="text-4xl font-bold">Список новостей</div>
       <UiButton
         type="button"
@@ -29,10 +23,13 @@ const handleReset = async () => {
         :disabled="isRefreshing"
         @click="handleReset"
       >
-        <ResetIcon class="fill-primary-main" />
+        <ResetIcon
+          class="fill-primary-main"
+          :class="{ 'animate-spin': isRefreshing }"
+        />
       </UiButton>
     </div>
-    <div>
+    <div class="w-full md:w-auto">
       <UiInput
         v-model="q"
         type="search"
@@ -40,6 +37,7 @@ const handleReset = async () => {
         placeholder="Поиск..."
         autocomplete="off"
         aria-label="Поиск по статьям"
+        class="w-full md:w-auto min-w-[300px]"
       >
         <template #icon>
           <SearchIcon class="fill-secondary-main" />
@@ -51,4 +49,3 @@ const handleReset = async () => {
     <UiHr />
   </Container>
 </template>
-\ЭХХХХХХ________________________________________________ъ

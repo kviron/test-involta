@@ -9,6 +9,7 @@ export const useArticlesStore = defineStore("articlesStore", {
     page: 1,
     limit: 4,
     source: "",
+    isRefreshing: false,
     total: 0,
     totalPages: 0,
     view: useCookie<ArticlesView>(ARTICLES_VIEW_COOKIE_KEY, {
@@ -42,6 +43,10 @@ export const useArticlesStore = defineStore("articlesStore", {
       this.q = q;
     },
     async reset() {
+      if (this.isRefreshing) return;
+
+      this.isRefreshing = true;
+      try {
       this.setSource("");
       this.setSearch("");
       this.setPagination({ page: 1 });
@@ -51,6 +56,9 @@ export const useArticlesStore = defineStore("articlesStore", {
         refreshNuxtData("articles"),
         refreshNuxtData("article-sources"),
       ]);
+      } finally {
+        this.isRefreshing = false;
+      }
     },
   },
 });

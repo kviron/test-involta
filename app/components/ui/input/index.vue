@@ -35,7 +35,7 @@ const onInput = (event: Event) => {
       v-bind="attrs"
       @input="onInput"
     />
-    <div class="absolute right-3 top-1/2 -translate-y-1/2" v-if="$slots.icon">
+    <div class="absolute right-2 top-1/2 -translate-y-1/2" v-if="$slots.icon">
       <slot name="icon" />
     </div>
   </div>

@@ -7,6 +7,9 @@ import { useArticlesQuerySync } from "../composables/useArticlesQuerySync";
 const articlesStore = useArticlesStore();
 const { page, limit, source, q, totalPages, view } = storeToRefs(articlesStore);
 const searchQuery = refDebounced(q, 350);
+const requestSearchQuery = computed(() =>
+  import.meta.server ? q.value : searchQuery.value,
+);
 
 const toInt = (value: string | null, fallback: number) => {
   const parsed = Number.parseInt(value ?? "", 10);
@@ -37,7 +40,9 @@ const { data: articles } = await useAsyncData<Article[]>(
         page: page.value,
         limit: limit.value,
         ...(source.value ? { source: source.value } : {}),
-        ...(searchQuery.value.trim() ? { q: searchQuery.value.trim() } : {}),
+        ...(requestSearchQuery.value.trim()
+          ? { q: requestSearchQuery.value.trim() }
+          : {}),
       },
     });
 
@@ -51,7 +56,7 @@ const { data: articles } = await useAsyncData<Article[]>(
     return response._data ?? [];
   },
   {
-    watch: [page, limit, source, searchQuery],
+    watch: [page, limit, source, requestSearchQuery],
   },
 );
 

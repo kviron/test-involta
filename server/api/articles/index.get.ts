@@ -13,6 +13,18 @@ const toPositiveInt = (value: unknown, fallback: number) => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 };
 
+const stripHtml = (value: string) =>
+  value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+type SearchableArticle = {
+  index: number;
+  title: string;
+  description: string;
+};
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const page = toPositiveInt(query.page, 1);
@@ -44,23 +56,58 @@ export default defineEventHandler(async (event) => {
         ? String(rawQ[0] ?? "").trim()
         : "";
 
-  const filtered =
+  const searchableArticles: SearchableArticle[] = articles.map(
+    (article, index) => ({
+      index,
+      title: article.title ?? "",
+      description: stripHtml(article.description ?? ""),
+    }),
+  );
+
+  const filtered: Article[] =
     searchQuery.length === 0
-      ? articles
-      : new Fuse(articles, {
+      ? articles.map((article, index) => ({
+          ...article,
+          descriptionPlain: searchableArticles[index]?.description ?? "",
+          searchMatches: undefined,
+        }))
+      : new Fuse(searchableArticles, {
           keys: [
             { name: "title", weight: 0.7 },
             { name: "description", weight: 0.3 },
           ],
-          threshold: 0.8,
+          threshold: 0.3,
+          includeMatches: true,
           isCaseSensitive: false,
           ignoreLocation: true,
           includeScore: true,
           shouldSort: true,
-          minMatchCharLength: 2,
+          minMatchCharLength: 3,
+          findAllMatches: false,
         })
           .search(searchQuery)
-          .map((result) => result.item);
+          .map((result) => {
+            const sourceArticle = articles[result.item.index]!;
+            const titleMatch = result.matches?.find(
+              (match) => match.key === "title",
+            );
+            const descriptionMatch = result.matches?.find(
+              (match) => match.key === "description",
+            );
+
+            return {
+              ...sourceArticle,
+              descriptionPlain: result.item.description,
+              searchMatches: {
+                title: titleMatch?.indices as
+                  | Array<[number, number]>
+                  | undefined,
+                description: descriptionMatch?.indices as
+                  | Array<[number, number]>
+                  | undefined,
+              },
+            } satisfies Article;
+          });
 
   const totalCount = filtered.length;
   const totalPages = Math.max(1, Math.ceil(totalCount / limit));

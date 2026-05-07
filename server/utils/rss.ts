@@ -10,11 +10,16 @@ export type Article = {
   id: string;
   title?: string;
   description: string;
+  descriptionPlain?: string;
   link?: string;
   pubDate?: string;
   image?: string;
   source: string;
   sourceId: string;
+  searchMatches?: {
+    title?: Array<[number, number]>;
+    description?: Array<[number, number]>;
+  };
 };
 
 export const RSS_STORAGE_KEY = "rss-data";
