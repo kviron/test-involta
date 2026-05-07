@@ -1,11 +1,26 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
+import DOMPurify from "dompurify";
 import type { Article } from "../../../server/utils/rss";
 
-defineProps<{
+const props = defineProps<{
   article: Article;
   view: "list" | "grid";
 }>();
+
+const stripHtml = (value: string) =>
+  value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const content = computed(() => {
+  const description = props.article.description ?? "";
+  if (typeof DOMPurify.sanitize === "function") {
+    return DOMPurify.sanitize(description, { ALLOWED_TAGS: [] });
+  }
+  return stripHtml(description);
+});
 </script>
 
 <template>
@@ -25,7 +40,7 @@ defineProps<{
           <h2 class="text-primary-main text-lg font-bold mb-5">
             {{ article.title }}
           </h2>
-          <p class="mb-5">{{ article.description }}</p>
+          <p class="mb-5" v-html="content" />
           <NuxtLink
             :to="article.link"
             target="_blank"
@@ -41,7 +56,7 @@ defineProps<{
         <h2 class="text-primary-main text-lg font-bold mb-7">
           {{ article.title }}
         </h2>
-        <p class="mb-5">{{ article.description }}</p>
+        <p class="mb-5" v-html="content" />
         <NuxtLink
           :to="article.link"
           target="_blank"

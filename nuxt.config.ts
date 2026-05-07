@@ -12,7 +12,12 @@ export default defineNuxtConfig({
       "*/5 * * * *": ["update-rss"],
     },
   },
-  modules: ["@pinia/nuxt", "@nuxt/eslint", "@nuxtjs/tailwindcss", "@nuxt/image"],
+  modules: [
+    "@pinia/nuxt",
+    "@nuxt/eslint",
+    "@nuxtjs/tailwindcss",
+    "@nuxt/image",
+  ],
   css: ["~/assets/css/main.css"],
   typescript: {
     strict: true,

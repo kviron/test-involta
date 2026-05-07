@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import ResetIcon from "~/assets/icons/reset.svg";
+import SearchIcon from "~/assets/icons/search.svg";
 
 const articlesStore = useArticlesStore();
 const { q } = storeToRefs(articlesStore);
@@ -36,13 +37,18 @@ const handleReset = async () => {
         v-model="q"
         type="search"
         name="q"
-        placeholder="Поиск по заголовку и описанию"
+        placeholder="Поиск..."
         autocomplete="off"
         aria-label="Поиск по статьям"
-      />
+      >
+        <template #icon>
+          <SearchIcon class="fill-secondary-main" />
+        </template>
+      </UiInput>
     </div>
   </Container>
   <Container>
     <UiHr />
   </Container>
 </template>
+\ЭХХХХХХ________________________________________________ъ
