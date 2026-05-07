@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { refDebounced } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import type { Article, Source } from "../../server/utils/rss";
 import { useArticlesQuerySync } from "../composables/useArticlesQuerySync";
 
 const articlesStore = useArticlesStore();
-const { page, limit, source, totalPages } = storeToRefs(articlesStore);
+const { page, limit, source, q, totalPages } = storeToRefs(articlesStore);
+const searchQuery = refDebounced(q, 350);
 
 const toInt = (value: string | null, fallback: number) => {
   const parsed = Number.parseInt(value ?? "", 10);
@@ -14,16 +16,19 @@ const toInt = (value: string | null, fallback: number) => {
 useArticlesQuerySync({
   page,
   source,
+  search: q,
+  searchQuery,
   setPage: (nextPage: number) =>
     articlesStore.setPagination({ page: nextPage }),
   setSource: (nextSource: string) => articlesStore.setSource(nextSource),
+  setSearch: (value: string) => articlesStore.setSearch(value),
 });
 
 const { data: sources } = await useAsyncData<Source[]>("article-sources", () =>
   $fetch<Source[]>("/api/articles/sources" as string),
 );
 
-const { data: articles, status } = await useAsyncData<Article[]>(
+const { data: articles } = await useAsyncData<Article[]>(
   "articles",
   async (_nuxtApp, { signal }) => {
     const response = await $fetch.raw<Article[]>("/api/articles", {
@@ -32,6 +37,7 @@ const { data: articles, status } = await useAsyncData<Article[]>(
         page: page.value,
         limit: limit.value,
         ...(source.value ? { source: source.value } : {}),
+        ...(searchQuery.value.trim() ? { q: searchQuery.value.trim() } : {}),
       },
     });
 
@@ -45,7 +51,7 @@ const { data: articles, status } = await useAsyncData<Article[]>(
     return response._data ?? [];
   },
   {
-    watch: [page, limit, source],
+    watch: [page, limit, source, searchQuery],
   },
 );
 
@@ -71,7 +77,7 @@ const handleSourceChange = (nextSource: string) => {
           @update:model-value="handleSourceChange"
         />
       </div>
-      <div v-if="articles && articles.length === 0">No articles found</div>
+      <ArticleEmptyState v-if="articles && articles.length === 0" />
       <ArticleList
         v-else-if="articles"
         :articles="articles"

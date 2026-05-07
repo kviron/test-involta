@@ -1,10 +1,18 @@
 import type { Ref } from "vue";
 
-type UseArticlesQuerySyncParams = {
+export type UseArticlesQuerySyncParams = {
   page: Ref<number>;
   source: Ref<string>;
+  /** Строка поиска в сторе (как в поле ввода), синхронизируется с `route.query.q` */
+  search: Ref<string>;
+  /**
+   * Дебаунснутая версия для записи в URL и для запросов к API —
+   * передаётся снаружи (`refDebounced(search, ms)`).
+   */
+  searchQuery: Ref<string>;
   setPage: (page: number) => void;
   setSource: (source: string) => void;
+  setSearch: (q: string) => void;
 };
 
 const toInt = (value: string | null, fallback: number) => {
@@ -17,11 +25,38 @@ const normalizePage = (value: string | null) => {
   return parsed > 0 ? parsed : 1;
 };
 
+export const queryParamString = (value: unknown): string => {
+  if (value === undefined || value === null) return "";
+  const raw = Array.isArray(value) ? value[0] : value;
+  return typeof raw === "string" ? raw : String(raw ?? "");
+};
+
+/** Собирает query для списка статей: page, source, q */
+const buildArticlesQuery = (
+  route: ReturnType<typeof useRoute>,
+  patch: {
+    page: string;
+    source: string;
+    q: string;
+  },
+): Record<string, string | string[]> => {
+  const next = { ...route.query } as Record<string, string | string[] | undefined>;
+  next.page = patch.page;
+  if (patch.source) next.source = patch.source;
+  else delete next.source;
+  if (patch.q.trim()) next.q = patch.q.trim();
+  else delete next.q;
+  return next as Record<string, string | string[]>;
+};
+
 export const useArticlesQuerySync = ({
   page,
   source,
+  search,
+  searchQuery,
   setPage,
   setSource,
+  setSearch,
 }: UseArticlesQuerySyncParams) => {
   const route = useRoute();
   const router = useRouter();
@@ -52,6 +87,17 @@ export const useArticlesQuerySync = ({
     { immediate: true },
   );
 
+  watch(
+    () => route.query.q,
+    (routeQ) => {
+      const next = queryParamString(routeQ);
+      if (next.trim() !== search.value.trim()) {
+        setSearch(next);
+      }
+    },
+    { immediate: true },
+  );
+
   watch(page, async (nextPage) => {
     const queryPage = normalizePage(
       Array.isArray(route.query.page)
@@ -62,11 +108,11 @@ export const useArticlesQuerySync = ({
     if (queryPage === nextPage) return;
 
     await router.replace({
-      query: {
-        ...route.query,
+      query: buildArticlesQuery(route, {
         page: String(nextPage),
-        ...(source.value ? { source: source.value } : {}),
-      },
+        source: source.value,
+        q: searchQuery.value,
+      }),
     });
   });
 
@@ -77,25 +123,25 @@ export const useArticlesQuerySync = ({
 
     if (querySource === nextSource) return;
 
-    const nextQuery = {
-      ...route.query,
-      page: "1",
-    };
+    await router.replace({
+      query: buildArticlesQuery(route, {
+        page: "1",
+        source: nextSource,
+        q: searchQuery.value,
+      }),
+    });
+  });
 
-    if (nextSource) {
-      await router.replace({
-        query: {
-          ...nextQuery,
-          source: nextSource,
-        },
-      });
-      return;
-    }
+  watch(searchQuery, async (next) => {
+    const routeStr = queryParamString(route.query.q);
+    if (next.trim() === routeStr.trim()) return;
 
-    const queryWithoutSource = {
-      ...nextQuery,
-    } as Record<string, string | string[] | null | undefined>;
-    delete queryWithoutSource.source;
-    await router.replace({ query: queryWithoutSource });
+    await router.replace({
+      query: buildArticlesQuery(route, {
+        page: "1",
+        source: source.value,
+        q: next,
+      }),
+    });
   });
 };

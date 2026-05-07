@@ -1,3 +1,4 @@
+import Fuse from "fuse.js";
 import {
   parseSourceFilter,
   RSS_STORAGE_KEY,
@@ -35,7 +36,33 @@ export default defineEventHandler(async (event) => {
       ? cached
       : cached.filter((article) => sourceIds.includes(article.sourceId));
 
-  const totalCount = articles.length;
+  const rawQ = query.q ?? query.search;
+  const searchQuery =
+    typeof rawQ === "string"
+      ? rawQ.trim()
+      : Array.isArray(rawQ)
+        ? String(rawQ[0] ?? "").trim()
+        : "";
+
+  const filtered =
+    searchQuery.length === 0
+      ? articles
+      : new Fuse(articles, {
+          keys: [
+            { name: "title", weight: 0.7 },
+            { name: "description", weight: 0.3 },
+          ],
+          threshold: 0.8,
+          isCaseSensitive: false,
+          ignoreLocation: true,
+          includeScore: true,
+          shouldSort: true,
+          minMatchCharLength: 2,
+        })
+          .search(searchQuery)
+          .map((result) => result.item);
+
+  const totalCount = filtered.length;
   const totalPages = Math.max(1, Math.ceil(totalCount / limit));
   const start = (page - 1) * limit;
 
@@ -46,5 +73,5 @@ export default defineEventHandler(async (event) => {
     "X-Limit": String(limit),
   });
 
-  return articles.slice(start, start + limit);
+  return filtered.slice(start, start + limit);
 });

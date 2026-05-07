@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
+
 const articlesStore = useArticlesStore();
+const { q } = storeToRefs(articlesStore);
 const isRefreshing = ref(false);
 
 const handleReset = async () => {
@@ -7,14 +10,7 @@ const handleReset = async () => {
 
   isRefreshing.value = true;
   try {
-    articlesStore.setSource("");
-    articlesStore.setPagination({ page: 1 });
-
-    await $fetch("/api/articles/refresh", { method: "POST" });
-    await Promise.all([
-      refreshNuxtData("articles"),
-      refreshNuxtData("article-sources"),
-    ]);
+    await articlesStore.reset();
   } finally {
     isRefreshing.value = false;
   }
@@ -23,7 +19,7 @@ const handleReset = async () => {
 
 <template>
   <Container class="flex justify-between align-center items-center my-8">
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-8">
       <div class="text-4xl font-bold">Список новостей</div>
       <UiButton
         type="button"
@@ -34,7 +30,16 @@ const handleReset = async () => {
         <img src="~/assets/icons/reset.svg" alt="Reset" />
       </UiButton>
     </div>
-    <div></div>
+    <div>
+      <UiInput
+        v-model="q"
+        type="search"
+        name="q"
+        placeholder="Поиск по заголовку и описанию"
+        autocomplete="off"
+        aria-label="Поиск по статьям"
+      />
+    </div>
   </Container>
   <Container>
     <UiHr />

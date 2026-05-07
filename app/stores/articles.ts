@@ -6,7 +6,7 @@ const ARTICLES_VIEW_STORAGE_KEY = "articles:view";
 
 export const useArticlesStore = defineStore("articlesStore", {
   state: () => ({
-    search: "",
+    q: "",
     page: 1,
     limit: 4,
     source: "",
@@ -39,8 +39,19 @@ export const useArticlesStore = defineStore("articlesStore", {
     setView(view: ArticlesView) {
       this.view = view;
     },
-    setSearch(search: string) {
-      this.search = search;
+    setSearch(q: string) {
+      this.q = q;
+    },
+    async reset() {
+      this.setSource("");
+      this.setSearch("");
+      this.setPagination({ page: 1 });
+
+      await $fetch("/api/articles/refresh", { method: "POST" });
+      await Promise.all([
+        refreshNuxtData("articles"),
+        refreshNuxtData("article-sources"),
+      ]);
     },
   },
 });
