@@ -58,6 +58,7 @@ export const useArticlesStore = defineStore("articlesStore", {
         this.setSource("");
         this.setQ("");
 
+        // Обновляем принудительно кэш новостей что бы получить новые записи
         await $fetch("/api/articles/refresh", { method: "POST" });
         await Promise.allSettled([
           refreshNuxtData("articles"),
