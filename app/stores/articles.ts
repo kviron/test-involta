@@ -18,10 +18,8 @@ export type ArticlesStore = {
   view: ArticlesView;
 };
 
-export const useArticlesStore = defineStore<"articlesStore", ArticlesStore>(
-  "articlesStore",
-  {
-    state: () => ({
+export const useArticlesStore = defineStore("articlesStore", {
+    state: (): ArticlesStore => ({
       q: "",
       page: 1,
       limit: ARTICLES_CONFIG.DEFAULT_LIMIT,
@@ -86,5 +84,4 @@ export const useArticlesStore = defineStore<"articlesStore", ArticlesStore>(
         }
       },
     },
-  },
-);
+  });
