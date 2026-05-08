@@ -22,7 +22,12 @@ export const useArticles = (options: UseArticlesOptions) => {
     $fetch<Source[]>("/api/articles/sources"),
   );
 
-  const { data: articles, refresh } = useAsyncData<Article[]>(
+  const {
+    data: articles,
+    refresh,
+    pending,
+    error,
+  } = useAsyncData<Article[]>(
     "articles",
     async (_nuxtApp, { signal }) => {
       const response = await $fetch.raw<Article[]>("/api/articles", {
@@ -55,5 +60,7 @@ export const useArticles = (options: UseArticlesOptions) => {
     articles,
     sources,
     refresh,
+    pending,
+    error,
   };
 };

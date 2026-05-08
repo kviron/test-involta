@@ -11,31 +11,18 @@ const { q, page, source, limit, totalPages, view } =
 // Инициализация синхронизации query параметров с store
 useArticlesQuerySync();
 
-// Debounced поиск для API запросов
-const searchQuery = refDebounced(q, 350);
-const requestSearchQuery = computed(() =>
-  import.meta.server ? q.value : searchQuery.value,
+// Debounced поиск только на клиенте
+const searchQuery = computed(() =>
+  import.meta.server ? q.value : refDebounced(q, 350).value,
 );
 
 const { articles, sources } = await useArticles({
   page,
   limit,
   source,
-  searchQuery: requestSearchQuery,
+  searchQuery,
   onPaginationUpdate: (pagination) => articlesStore.setPagination(pagination),
 });
-
-const handlePageChange = (nextPage: number) => {
-  articlesStore.setPage(nextPage);
-};
-
-const handleSourceChange = (nextSource: string) => {
-  articlesStore.setSource(nextSource);
-};
-
-const handleViewChange = (nextView: "list" | "grid") => {
-  articlesStore.setView(nextView);
-};
 </script>
 
 <template>
@@ -45,9 +32,9 @@ const handleViewChange = (nextView: "list" | "grid") => {
         <ArticleSources
           :sources="sources ?? []"
           :model-value="source"
-          @update:model-value="handleSourceChange"
+          @update:model-value="articlesStore.setSource"
         />
-        <ArticleView :view="view" @update:view="handleViewChange" />
+        <ArticleView :view="view" @update:view="articlesStore.setView" />
       </div>
       <ArticleEmptyState v-if="articles && articles.length === 0" />
       <ArticleList
@@ -56,7 +43,7 @@ const handleViewChange = (nextView: "list" | "grid") => {
         :total-pages="totalPages"
         :page="page"
         :view="view"
-        @page-change="handlePageChange"
+        @page-change="articlesStore.setPage"
       />
     </div>
   </Container>
