@@ -1,4 +1,4 @@
-export type ArticlesView = "list" | "grid";
+export type { ArticlesView } from "../shared/constants/articles";
 
 export type Source = {
   id: string;

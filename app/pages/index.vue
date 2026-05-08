@@ -3,6 +3,7 @@ import { refDebounced } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { useArticlesQuerySync } from "../composables/useArticlesQuerySync";
 import { useArticles } from "../composables/useArticles";
+import { ARTICLES_CONFIG } from "../../shared/constants/articles";
 
 const articlesStore = useArticlesStore();
 const { q, page, source, limit, totalPages, view } =
@@ -13,7 +14,9 @@ useArticlesQuerySync();
 
 // Debounced поиск только на клиенте
 const searchQuery = computed(() =>
-  import.meta.server ? q.value : refDebounced(q, 350).value,
+  import.meta.server
+    ? q.value
+    : refDebounced(q, ARTICLES_CONFIG.SEARCH_DEBOUNCE_MS).value,
 );
 
 const { articles, sources } = await useArticles({

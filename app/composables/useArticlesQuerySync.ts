@@ -1,7 +1,7 @@
 import { useRoute, useRouter } from "vue-router";
 import { useArticlesStore } from "../stores/articles";
-import { queryParamString } from "../utils/string";
-import { normalizePage } from "../utils/validation";
+import { queryParamString } from "../../shared/string";
+import { normalizePage } from "../../shared/validation";
 
 export const useArticlesQuerySync = () => {
   const route = useRoute();

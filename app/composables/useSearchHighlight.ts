@@ -1,8 +1,8 @@
 import DOMPurify from "dompurify";
 import { computed, type ComputedRef } from "vue";
 import type { Article } from "../../types/articles";
-import { highlightMatches } from "../utils/search";
-import { stripHtml } from "../utils/string";
+import { highlightMatches } from "../../shared/search";
+import { stripHtml } from "../../shared/string";
 
 export const useSearchHighlight = (article: ComputedRef<Article> | Article) => {
   const articleValue = computed(() =>

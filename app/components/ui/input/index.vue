@@ -20,8 +20,9 @@ const emit = defineEmits<{
 const attrs = useAttrs();
 
 const onInput = (event: Event) => {
-  const target = event.target as HTMLInputElement | null;
-  emit("update:modelValue", target?.value ?? "");
+  if (event.target instanceof HTMLInputElement) {
+    emit("update:modelValue", event.target.value);
+  }
 };
 </script>
 

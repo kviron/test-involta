@@ -1,8 +1,9 @@
 import Parser from "rss-parser";
 import type { Article, Source } from "../../types/articles";
+import { RSS_STORAGE_KEYS } from "../constants/storage";
 
-export const RSS_STORAGE_KEY = "rss-data";
-export const RSS_UPDATED_AT_KEY = "rss-updated-at";
+export const RSS_STORAGE_KEY = RSS_STORAGE_KEYS.DATA;
+export const RSS_UPDATED_AT_KEY = RSS_STORAGE_KEYS.UPDATED_AT;
 
 const parser = new Parser();
 
