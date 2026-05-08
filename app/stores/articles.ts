@@ -29,8 +29,16 @@ export const useArticlesStore = defineStore("articlesStore", {
       if (payload.totalPages !== undefined)
         this.totalPages = payload.totalPages;
     },
+    setPage(page: number) {
+      this.page = page;
+    },
     setSource(source: string) {
       this.source = source;
+      this.page = 1; // Сброс страницы при смене источника
+    },
+    setQ(q: string) {
+      this.q = q;
+      this.page = 1; // Сброс страницы при поиске
     },
     setView(view: ArticlesView) {
       this.view = view;
@@ -47,15 +55,14 @@ export const useArticlesStore = defineStore("articlesStore", {
 
       this.isRefreshing = true;
       try {
-      this.setSource("");
-      this.setSearch("");
-      this.setPagination({ page: 1 });
+        this.setSource("");
+        this.setQ("");
 
-      await $fetch("/api/articles/refresh", { method: "POST" });
-      await Promise.all([
-        refreshNuxtData("articles"),
-        refreshNuxtData("article-sources"),
-      ]);
+        await $fetch("/api/articles/refresh", { method: "POST" });
+        await Promise.allSettled([
+          refreshNuxtData("articles"),
+          refreshNuxtData("article-sources"),
+        ]);
       } finally {
         this.isRefreshing = false;
       }

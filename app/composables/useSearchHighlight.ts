@@ -4,9 +4,6 @@ import type { Article } from "../../types/articles";
 import { highlightMatches } from "../utils/search";
 import { stripHtml } from "../utils/string";
 
-/*
- * Хук для подсветки текста поиска
- */
 export const useSearchHighlight = (article: ComputedRef<Article> | Article) => {
   const articleValue = computed(() =>
     "value" in article ? article.value : article,

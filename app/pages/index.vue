@@ -5,13 +5,13 @@ import { useArticlesQuerySync } from "../composables/useArticlesQuerySync";
 import { useArticles } from "../composables/useArticles";
 
 const articlesStore = useArticlesStore();
-const { limit, totalPages, view } = storeToRefs(articlesStore);
+const { q, page, source, limit, totalPages, view } =
+  storeToRefs(articlesStore);
 
-// Синхронизация query параметров с store
-const { page, source } = useArticlesQuerySync();
+// Инициализация синхронизации query параметров с store
+useArticlesQuerySync();
 
-// Используем q из store для поиска (связан с input через v-model в header)
-const { q } = storeToRefs(articlesStore);
+// Debounced поиск для API запросов
 const searchQuery = refDebounced(q, 350);
 const requestSearchQuery = computed(() =>
   import.meta.server ? q.value : searchQuery.value,
@@ -26,11 +26,11 @@ const { articles, sources } = await useArticles({
 });
 
 const handlePageChange = (nextPage: number) => {
-  page.value = nextPage;
+  articlesStore.setPage(nextPage);
 };
 
 const handleSourceChange = (nextSource: string) => {
-  source.value = nextSource;
+  articlesStore.setSource(nextSource);
 };
 
 const handleViewChange = (nextView: "list" | "grid") => {
