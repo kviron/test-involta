@@ -1,4 +1,4 @@
-type ArticlesView = "list" | "grid";
+import type { ArticlesView } from "../../types/articles";
 
 const ARTICLES_VIEW_STORAGE_KEY = "articles:view";
 const ARTICLES_VIEW_COOKIE_KEY = "articles:view";

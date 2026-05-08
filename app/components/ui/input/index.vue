@@ -34,8 +34,8 @@ const onInput = (event: Event) => {
       :class="$slots.icon ? 'pr-8' : ''"
       v-bind="attrs"
       @input="onInput"
-    />
-    <div class="absolute right-2 top-1/2 -translate-y-1/2" v-if="$slots.icon">
+    >
+    <div v-if="$slots.icon" class="absolute right-2 top-1/2 -translate-y-1/2">
       <slot name="icon" />
     </div>
   </div>

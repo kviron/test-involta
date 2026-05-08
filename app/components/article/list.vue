@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Article } from "../../../server/utils/rss";
+import type { Article } from "../../../types/articles";
 
 defineProps<{
   articles: Article[];
@@ -25,8 +25,8 @@ const emit = defineEmits<{
     >
       <ArticleItem
         v-for="article in articles"
-        :article="article"
         :key="article.id"
+        :article="article"
         :view="view"
       />
     </div>

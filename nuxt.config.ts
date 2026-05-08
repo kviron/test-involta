@@ -19,10 +19,10 @@ export default defineNuxtConfig({
     "@nuxt/image",
   ],
   css: ["~/assets/css/main.css"],
-  // typescript: {
-  //   strict: true,
-  //   typeCheck: true,
-  // },
+  typescript: {
+    strict: true,
+    typeCheck: true,
+  },
   sourcemap: {
     client: true,
     server: true,
@@ -32,6 +32,10 @@ export default defineNuxtConfig({
       mosUrl: "https://www.mos.ru/rss",
       lentaUrl: "https://lenta.ru/rss",
     },
+  },
+  image: {
+    format: ["webp", "avif"],
+    quality: 80,
   },
   vite: {
     plugins: [

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Source } from "../../../server/utils/rss";
+import type { Source } from "../../../types/articles";
 
 defineProps<{
   sources: Source[];

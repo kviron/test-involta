@@ -1,74 +1,15 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
-import DOMPurify from "dompurify";
-import type { Article } from "../../../server/utils/rss";
+import type { Article } from "../../../types/articles";
+import { useSearchHighlight } from "../../composables/useSearchHighlight";
 
 const props = defineProps<{
   article: Article;
   view: "list" | "grid";
 }>();
 
-const stripHtml = (value: string) =>
-  value
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-const escapeHtml = (value: string) =>
-  value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-
-const highlightMatches = (
-  text: string,
-  regions: Array<[number, number]> = [],
-) => {
-  if (!regions.length) return escapeHtml(text);
-
-  const chunks: string[] = [];
-  let lastIndex = 0;
-
-  for (const [start, end] of regions) {
-    if (start > lastIndex) {
-      chunks.push(escapeHtml(text.slice(lastIndex, start)));
-    }
-
-    chunks.push(
-      `<span class="mark-search">${escapeHtml(text.slice(start, end + 1))}</span>`,
-    );
-    lastIndex = end + 1;
-  }
-
-  if (lastIndex < text.length) {
-    chunks.push(escapeHtml(text.slice(lastIndex)));
-  }
-
-  return chunks.join("");
-};
-
-const titleText = computed(() => props.article.title ?? "");
-
-const titleHtml = computed(() =>
-  highlightMatches(titleText.value, props.article.searchMatches?.title),
-);
-
-const contentText = computed(() => {
-  if (props.article.descriptionPlain) {
-    return props.article.descriptionPlain;
-  }
-
-  const description = props.article.description ?? "";
-  if (typeof DOMPurify.sanitize === "function") {
-    return DOMPurify.sanitize(description, { ALLOWED_TAGS: [] });
-  }
-  return stripHtml(description);
-});
-
-const contentHtml = computed(() =>
-  highlightMatches(contentText.value, props.article.searchMatches?.description),
+const { titleHtml, contentHtml } = useSearchHighlight(
+  computed(() => props.article),
 );
 </script>
 

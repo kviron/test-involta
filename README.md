@@ -1,75 +1,81 @@
-# Nuxt Minimal Starter
+# Involta - RSS News Aggregator
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Nuxt 4 приложение для агрегации и отображения новостей из RSS-лент с поиском, фильтрацией и пагинацией.
 
-## Setup
+## Возможности
 
-Make sure to install dependencies:
+- 📰 Агрегация новостей из нескольких RSS источников (mos.ru, lenta.ru)
+- 🔍 Полнотекстовый поиск с подсветкой совпадений (Fuse.js)
+- 🎯 Фильтрация по источникам
+- 📄 Пагинация результатов
+- 🎨 Переключение между grid/list видами
+- 💾 Кэширование данных
+- 🔄 Автоматическое обновление каждые 5 минут
+- ⚡ Server-side rendering (SSR)
+
+## Технологии
+
+- **Framework**: Nuxt 4
+- **UI**: Vue 3 (Composition API), Tailwind CSS
+- **State Management**: Pinia
+- **Search**: Fuse.js
+- **RSS Parsing**: rss-parser
+- **TypeScript**: Strict mode enabled
+- **Linting**: ESLint with Nuxt preset
+
+## Установка
 
 ```bash
-# npm
+# Установка зависимостей
 npm install
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+# Запуск dev сервера
 npm run dev
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
+# Сборка для production
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+## Структура проекта
+
+```
+involta/
+├── app/
+│   ├── components/          # Vue компоненты
+│   ├── composables/        # Переиспользуемые composables
+│   ├── pages/              # Страницы приложения
+│   ├── stores/             # Pinia stores
+│   └── utils/              # Клиентские утилиты
+├── server/
+│   ├── api/                # API endpoints
+│   ├── tasks/              # Scheduled tasks
+│   └── utils/              # Серверные утилиты
+├── types/                  # Shared TypeScript типы
+└── nuxt.config.ts         # Конфигурация Nuxt
+```
+
+## API Endpoints
+
+### GET /api/articles
+Получение списка статей с фильтрацией, поиском и пагинацией.
+
+### GET /api/articles/sources
+Получение списка доступных источников новостей.
+
+### POST /api/articles/refresh
+Принудительное обновление кэша RSS лент.
+
+## Разработка
 
 ```bash
-# npm
-npm run preview
+# Проверка типов
+npm run typecheck
 
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+# Линтинг
+npm run lint
+npm run lint:fix
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Лицензия
+
+MIT

@@ -1,10 +1,10 @@
+import type { Article } from "../../types/articles";
 import {
   getSources,
   parseSourceArticles,
   RSS_STORAGE_KEY,
   RSS_UPDATED_AT_KEY,
   sortByPubDateDesc,
-  type Article,
 } from "../utils/rss";
 
 export default defineTask({

@@ -1,26 +1,5 @@
 import Parser from "rss-parser";
-
-export type Source = {
-  id: string;
-  domain: string;
-  url: string;
-};
-
-export type Article = {
-  id: string;
-  title?: string;
-  description: string;
-  descriptionPlain?: string;
-  link?: string;
-  pubDate?: string;
-  image?: string;
-  source: string;
-  sourceId: string;
-  searchMatches?: {
-    title?: Array<[number, number]>;
-    description?: Array<[number, number]>;
-  };
-};
+import type { Article, Source } from "../../types/articles";
 
 export const RSS_STORAGE_KEY = "rss-data";
 export const RSS_UPDATED_AT_KEY = "rss-updated-at";
